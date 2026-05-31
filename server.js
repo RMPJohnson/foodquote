@@ -14,7 +14,7 @@
  * ============================================================
  */
 
-// ------------------------------------------------------------
+ // ------------------------------------------------------------
 // Import Dependencies
 // ------------------------------------------------------------
 
@@ -23,6 +23,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const connectDB = require("./config/db");
 // ------------------------------------------------------------
 // Create Express Application
 // ------------------------------------------------------------
@@ -34,6 +35,8 @@ dotenv.config();
 // Server Port
 const PORT = process.env.PORT || 3000;
 
+// DB connection
+connectDB();
 // Application Environment
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -82,7 +85,7 @@ app.use((req, res, next) => {
 
     next();
 });
-
+app.use('/api/v1/auth/',require('./routes/authRoutes'));
 // ------------------------------------------------------------
 // Root Route
 // ------------------------------------------------------------
@@ -160,7 +163,7 @@ app.use((err, req, res, next) => {
 // ------------------------------------------------------------
 
 app.listen(PORT, () => {
-    console.log('');
+
     console.log('========================================');
     console.log('Express Server Started Successfully');
     console.log('========================================');
@@ -168,6 +171,4 @@ app.listen(PORT, () => {
     console.log(`Port        : ${PORT}`);
     console.log(`Local URL   : http://localhost:${PORT}`);
     console.log(`Started At  : ${new Date().toISOString()}`);
-    console.log('========================================');
-    console.log('');
 });
