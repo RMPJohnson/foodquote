@@ -1,7 +1,8 @@
 // User Registration
-const registerValidation = require("../middlewares/registerValidation");
 const {validationResult} = require("express-validator");
 const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const registerController = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -26,10 +27,14 @@ const registerController = async (req, res) => {
                 message: 'User already exists with this email or phone number'
             });
         }
-        const user = await User.create({userName, email, password, phone, address});
+        const salt = await bcrypt.genSalt(10);
+        const hashedPass = await bcrypt.hash(password, salt);
+
+        const user = await User.create({userName, email, password: hashedPass, phone, address});
         return res.status(200).json({
             success: true,
-            message: 'User registered successfully'
+            message: 'User registered successfully',
+            user
         });
 
     }catch (error) {
@@ -45,9 +50,39 @@ const registerController = async (req, res) => {
 }
 const loginController = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Error occurred in user login',
+                errors: errors.array()
+            });
+        }
+        const {email, password } = req.body;
+        const user = await User.findOne({email : email})
+
+        if (!user) {
+            return res.status(409).json({
+                success: false,
+                message: 'User does not exist or invalid email or password'
+            });
+        }
+        const isMatch = await bcrypt.compare(password,user.password);
+        if (!isMatch) {
+            return res.status(409).json({
+                success: false,
+                message: 'Password is incorrect',
+            })
+        }
+        user.password = undefined;
+
+        const token = JWT.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d",});
+
         return res.status(200).json({
             success: true,
-            message: 'User is login successfully'
+            message: 'User is login successfully',
+            token,
+            user
         });
     } catch (error) {
         console.log(error);

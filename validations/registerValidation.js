@@ -24,4 +24,6 @@ const registerValidation = [
         .notEmpty()
         .withMessage('Address is required')
 ];
-module.exports = registerValidation
+module.exports = {
+    registerValidation
+};
