@@ -1,0 +1,24 @@
+{
+  "name": "foodapp",
+  "version": "1.0.0",
+  "description": "This is my first application that is developed in Node.js using Express.js",
+  "keywords": [],
+  "license": "ISC",
+  "author": "Yasir Rehman",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "server": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.14"
+  }
+}
